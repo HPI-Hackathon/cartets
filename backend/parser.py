@@ -4,7 +4,7 @@ import json
 import random
 
 
-def main(long,lat):
+def run(long,lat):
     response = urllib2.urlopen('http://m.mobile.de/svc/s/?ll=' + long + ',' + lat + '&s=Car&psz=100&sb=doc')
     data = json.load(response)['items']
     gameCars = validation(data)
@@ -32,7 +32,5 @@ def validation(list):
                 resList.append(final)
     return resList
 
-if __name__ == '__main__':
-    main()
 
 
