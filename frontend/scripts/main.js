@@ -109,4 +109,5 @@ function UI (socket) {
     createCompareView(cards);
 }
 
+
 var userInterface = new UI(connection);
