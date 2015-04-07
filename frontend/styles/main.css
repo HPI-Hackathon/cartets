@@ -19,9 +19,8 @@ p {
 	margin: 0;
 }
 
-.card{
+.card {
 	display: inline-block;
-	width: calc(33% - 20px);
 	max-width: 400px;
 	background-color: #FFF;
 	-webkit-box-shadow: 2px 5px 10px 0 rgba(0,0,0,0.8);
@@ -40,10 +39,6 @@ p {
 	max-width: 100%;
 }
 
-.cardView > .card {
-	width: 100%;
-}
-
 .statKey {
 	float: left;
 	color: #BBB;
@@ -56,4 +51,8 @@ p {
 .compareView {
 	position: relative;
 	width: 280%;
+}
+
+.compareView .card {
+    width: calc(33% - 20px);
 }
