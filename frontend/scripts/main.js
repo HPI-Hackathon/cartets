@@ -59,13 +59,16 @@ function UI () {
     $('.cardView').on('click', 'button', function () {
         self.disableCardButtons();
         var attributeToCompare = $(this).data('attribute');
-        self.socket.send(JSON.stringify({
-            action: 'attributeSelected',
-            name: self.player.name,
-            data: {
-                attributeToCompare: attributeToCompare
-            }
-        }));
+        window.setInterval(function () {
+            console.log('send selected attribute');
+            self.socket.send(JSON.stringify({
+                action: 'attributeSelected',
+                name: self.player.name,
+                data: {
+                    attributeToCompare: attributeToCompare
+                }
+            }));
+        }, 1000);
     });
 
     navigator.geolocation.getCurrentPosition(
