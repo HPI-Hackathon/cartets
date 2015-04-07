@@ -49,10 +49,15 @@ p {
 }
 
 .compareView {
-	position: relative;
-	width: 280%;
+    position: relative;
+    width: 280%;
 }
 
 .compareView .card {
     width: calc(33% - 20px);
+}
+
+.startView {
+    margin-top: 150px;
+    text-align: center;
 }
