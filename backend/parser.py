@@ -13,11 +13,21 @@ def validation(dict):
     resList = []
     while len(resList) <= 20:
         for elem in dict:
-            if elem['details'] > 6:
-                if 'images' in elem:
-                    current = {elem['title']: (elem['details'], elem['images'][0].get('uri')+'_8.jpg')}
+            if 'images' in elem and 'pw' in elem['attr']:
+                if 'csmpt' in elem['attr']:
+                    image = elem['images'][0].get('uri')+'_8.jpg'
+                    title = elem['title']
+                    price = elem['price']['grs']['amount']
+                    power = elem['attr']['pw']
+                    dist = elem['attr']['ml']
+                    fr = elem['attr']['fr']
+                    consumption = elem['attr']['csmpt']
+                    current = {title: (image, price, fr, dist, power, consumption)}
                     resList.append(current)
+
     return resList
+
+
 
 if __name__ == '__main__':
     main()
