@@ -29,11 +29,12 @@ def validation(list):
             dist = re.search('^[0-9\.]+', elem['attr']['ml']).group(0)
             first = '.'.join(reversed(elem['attr']['fr'].split('/')))
             location = '{:f},{:f}'.format(elem['contact']['latLong']['lat'], elem['contact']['latLong']['lon'])
+            url = elem['url']
             try:
                 consumption = re.search('^[^0-9]*\d+\,\d+', elem['attr']['csmpt']).group(0).replace(',','.')
             except Exception, e:
                 continue
-            current = {'title': title, 'image': image, 'price': price, 'registration': first, 'mileage': dist, 'power': power, 'consumption': consumption, 'location': location}
+            current = {'title': title, 'image': image, 'price': price, 'registration': first, 'mileage': dist, 'power': power, 'consumption': consumption, 'location': location, 'url': url}
             final = json.dumps(current)
             resList.append(final)
     return resList
