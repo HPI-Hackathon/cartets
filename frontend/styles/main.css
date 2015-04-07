@@ -28,3 +28,12 @@ p {
 	padding: 1em;
 	margin: 10px;
 }
+
+.statKey {
+	float: left;
+	color: #BBB;
+}
+
+.statValue {
+	float: right;
+}
