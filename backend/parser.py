@@ -3,12 +3,13 @@ import urllib2
 import json
 import random
 
-def main():
-    #response = urllib2.urlopen('http://m.mobile.de/svc/s/?ll=' + ll)
-    response = urllib2.urlopen('http://m.mobile.de/svc/s/?ll=52.516,13.376&s=Car&psz=100&sb=doc')
+
+def main(long,lat):
+    response = urllib2.urlopen('http://m.mobile.de/svc/s/?ll='+ long + ',' + lat + '&s=Car&psz=100&sb=doc')
     data = json.load(response)['items']
     gameCars = validation(data)
     print gameCars
+    return gameCars
 
 def validation(list):
     resList = []
@@ -29,8 +30,6 @@ def validation(list):
                 final = json.dumps(current)
                 resList.append(final)
     return resList
-
-
 
 if __name__ == '__main__':
     main()
