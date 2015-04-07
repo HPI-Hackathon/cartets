@@ -5,11 +5,12 @@ import random
 
 
 def main(long,lat):
-    response = urllib2.urlopen('http://m.mobile.de/svc/s/?ll='+ long + ',' + lat + '&s=Car&psz=100&sb=doc')
+    response = urllib2.urlopen('http://m.mobile.de/svc/s/?ll=' + long + ',' + lat + '&s=Car&psz=100&sb=doc')
     data = json.load(response)['items']
     gameCars = validation(data)
     print gameCars
     return gameCars
+
 
 def validation(list):
     resList = []
@@ -26,7 +27,7 @@ def validation(list):
                 dist = elem['attr']['ml']
                 first = elem['attr']['fr']
                 consumption = elem['attr']['csmpt']
-                current = {'title': title, 'image': image, 'price': price, 'first': first, 'dist': dist, 'power': power, 'consumption': consumption}
+                current = {'title': title, 'image': image, 'price': price, 'registration': first, 'mileage': dist, 'power': power, 'consumption': consumption}
                 final = json.dumps(current)
                 resList.append(final)
     return resList
