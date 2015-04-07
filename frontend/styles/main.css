@@ -27,6 +27,8 @@ p {
 	border-radius: 10px 10px 10px 10px;
 	padding: 1em;
 	margin: 10px;
+	display: inline-block;
+	float: left;
 }
 
 .statKey {
@@ -36,4 +38,23 @@ p {
 
 .statValue {
 	float: right;
+}
+
+.rightCard {
+	left: -170%;
+}
+
+.middleCard {
+	left: -85%;
+}
+
+.leftCard {
+	left: 0;
+}
+
+.compareView {
+	position: relative;
+	width: 270%;
+	-webkit-transition: left 1s; /* Safari */
+    transition: left 1s;
 }
