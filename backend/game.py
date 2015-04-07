@@ -12,6 +12,10 @@ class Game:
         self.players = {}
         self.turn = None
         self.running = False
+        self.is_evaluated = False
+
+    def get_turn(self):
+        return self.turn
 
     def add_player(self, conn, data):
         player = Player(conn, data)
@@ -32,26 +36,43 @@ class Game:
                     time.sleep(0.5)
                 return
 
-        return self.handle_round(player)
+        while self.is_evaluated:
+            time.sleep(0.5)
 
-    def handle_round(self, player):
-        # TODO: Add actual functionality
-        cards = [player.get_card() for player in self.players.values()]
-        # Only hand out current card
-        data = {'turn': self.turn.get_name(), 'cards': cards}
-        print data
-        return json.dumps({'action': 'next', 'data': data})
+        return
 
-    def start_game(self):
-        print "selecting starter!"
-        name = random.choice(self.players.keys())
-        self.turn = self.players[name]
-        data = {'turn': name, 'cards': []}
-        # TODO: hand out cards
+    def attribute_selected(self, data):
+        # Get all cards with players
+        cards = [(player, player.get_card()) for player in self.players]
+        all_cards = [card.get_values() for _, card in cards]
+
+        # Get current card and compare it
+        cur_card = cards.pop(self.turn.get_name())
+        winner, card = cur_card.compare(cards)
+
+        # Update after comparison
+        self.turn = winner
+        winner.add_cards([card for _, card in cards])
+        data = {'turn': winner.get_name()}
+        data['all_cards'] = all_cards
+        data['winner_card'] = card.get_values()
+        self.is_evaluated = True
+
+        # Send data to players
         for name, player in self.players.items():
+            data['card'] = player.next_card()
             conn = player.get_connection()
             conn.sendMessage(json.dumps({'action': 'start', 'data': data}))
-        return
+
+    def start_game(self):
+        name = random.choice(self.players.keys())
+        self.turn = self.players[name]
+        data = {'turn': name}
+        self.running = True
+        for name, player in self.players.items():
+            data['card'] = player.next_card()
+            conn = player.get_connection()
+            conn.sendMessage(json.dumps({'action': 'start', 'data': data}))
 
 
 class Player:
@@ -74,7 +95,14 @@ class Player:
         long = player_data['data']['long']
         lat = player_data['data']['lat']
         cards = card_parser.main(lat, long)
-        self.cards = [Card(values) for values in cards]
+        return [Card(values) for values in cards]
+
+    def next_card(self):
+        self.current_card = self.cards.pop(0)
+        return self.current_card.get_values()
+
+    def add_cards(self, cards):
+        self.cards.extend(cards)
 
 
 class Card:
@@ -84,10 +112,12 @@ class Card:
         self.comparisons = {'price': min,
                             'power': max,
                             'mileage': min,
-                            'registration': min,
+                            'registration': max,
                             'consumption': min}
 
-    def compare(self, attr, cards):
+    def compare(self, attr, player_card):
         comp = self.comparisons[attr]
-        winner_card = comp(cards)
-        return winner_card
+        return comp(player_card, key=lambda x: float(x[1][attr]))
+
+    def get_values(self):
+        return self.values
