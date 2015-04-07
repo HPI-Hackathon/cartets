@@ -1,32 +1,32 @@
 <div class="cardView">
 	<div class="container">
 		<div class="row">
-			<h3 class="text-center">Random Gefährt 3000 XZ</h3>
+			<h3 class="text-center">{{title}}</h3>
 			<div class="cardImage">
-				<img src="http://lorempixel.com/400/300/transport/" class="img-responsive">
+				<img src="{{image}}" class="img-responsive">
 			</div>
 			<p class="text-right location"><small>August-Bebel-Str. 4, 14482 Potsdam</small></p>
 		</div>
 		<div class="row">
 			<button type="button" class="btn btn-default btn-lg btn-block">
 				<span class="statKey">Preis</span>
-				<span class="statValue">6000€</span>
+				<span class="statValue">{{price}}€</span>
 			</button>
 			<button type="button" class="btn btn-default btn-lg btn-block">
 				<span class="statKey">Leistung</span>
-				<span class="statValue">120PS</span>
+				<span class="statValue">{{performance}}PS</span>
 			</button>
 			<button type="button" class="btn btn-default btn-lg btn-block">
 				<span class="statKey">Erstzulassung</span>
-				<span class="statValue">1990</span>
+				<span class="statValue">{{ez}}</span>
 			</button>
 			<button type="button" class="btn btn-default btn-lg btn-block">
 				<span class="statKey">Kilometerstand</span>
-				<span class="statValue">120.000km</span>
+				<span class="statValue">{{km}}km</span>
 			</button>
 			<button type="button" class="btn btn-default btn-lg btn-block">
 				<span class="statKey">Verbrauch</span>
-				<span class="statValue">20l/100km</span>
+				<span class="statValue">{{consumption}}l/100km</span>
 			</button>
 		</div>
 	</div>

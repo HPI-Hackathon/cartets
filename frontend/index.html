@@ -8,6 +8,42 @@
     <link rel="stylesheet" href="./styles/main.css">
 </head>
 <body>
+	<script id="card-template" type="text/x-handlebars-template">
+		<div class="cardView">
+			<div class="container">
+				<div class="row">
+					<h3 class="text-center">{{title}}</h3>
+					<div class="cardImage">
+						<img src="{{image}}" class="img-responsive">
+					</div>
+					<p class="text-right location"><small>{{location}}</small></p>
+				</div>
+				<div class="row">
+					<button type="button" class="btn btn-default btn-lg btn-block">
+						<span class="statKey">Preis</span>
+						<span class="statValue">{{price}}€</span>
+					</button>
+					<button type="button" class="btn btn-default btn-lg btn-block">
+						<span class="statKey">Leistung</span>
+						<span class="statValue">{{performance}}PS</span>
+					</button>
+					<button type="button" class="btn btn-default btn-lg btn-block">
+						<span class="statKey">Erstzulassung</span>
+						<span class="statValue">{{ez}}</span>
+					</button>
+					<button type="button" class="btn btn-default btn-lg btn-block">
+						<span class="statKey">Kilometerstand</span>
+						<span class="statValue">{{km}}km</span>
+					</button>
+					<button type="button" class="btn btn-default btn-lg btn-block">
+						<span class="statKey">Verbrauch</span>
+						<span class="statValue">{{consumption}}l/100km</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</script>
+
 	<div class="container">
         <div class="panel panel-default" id="locationMessage">
             <div class="panel-body">
@@ -25,9 +61,16 @@
             </div>
         </form>
     </div>
-
+	
+	<div class="compareView leftCard">
+		<div class="container">
+			<div class="row"></div>
+		</div>
+	</div>
+  
     <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="./scripts/handlebars-v3.0.0.js"></script>
     <script src="./scripts/main.js"></script>
 </body>
 </html>
