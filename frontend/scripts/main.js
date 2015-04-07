@@ -1,7 +1,7 @@
 /* eslint-env browser, jquery */
 /* eslint quotes: [2, "single"], strict: 0 */
 
-// var connection = new WebSocket('ws://html5rocks.websocket.org/echo', []);
+var connection = new WebSocket('ws://localhost:8080', []);
 
 // connection.onopen = function () {
 //     connection.send('Ping');
