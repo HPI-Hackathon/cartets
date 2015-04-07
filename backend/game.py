@@ -3,10 +3,10 @@
 import json
 import random
 
-import parser
+import card_parser
 
 
-class Game():
+class Game:
     def __init__(self):
         self.players = {}
         self.turn = None
@@ -30,7 +30,7 @@ class Game():
     def handle_round(self, player):
         # TODO: Add actual functionality
         cards = [player.get_card() for player in self.players.values()]
-        data = {'turn': self.turn, 'cards': cards}
+        data = {'turn': self.turn.get_name(), 'cards': cards}
         return json.dumps({'action': 'next', 'data': data})
 
     def start_game(self):
@@ -39,7 +39,7 @@ class Game():
         return self.turn
 
 
-class Player():
+class Player:
     def __init__(self, conn, data):
         self.name = data['name']
         self.connection = conn
@@ -52,20 +52,20 @@ class Player():
     def get_card(self):
         return self.current_card
 
-    def receive_cards(self, data):
-        long = data['long']
-        lat = data['lat']
-        cards = parser.main(long, lat)
+    def receive_cards(self, player_data):
+        long = player_data['data']['long']
+        lat = player_data['data']['lat']
+        cards = card_parser.main(lat, long)
         self.cards = [Card(values) for values in cards]
 
 
-class Card():
+class Card:
     def __init__(self, values):
         self.values = values
         # TODO: Check if comparisons are good
         self.comparisons = {'price': min,
                             'power': max,
-                            'milage': min,
+                            'mileage': min,
                             'registration': min,
                             'consumption': min}
 
