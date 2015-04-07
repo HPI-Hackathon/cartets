@@ -6,28 +6,48 @@ from game import Game
 
 def client_thread(game, conn, data):
     player = game.add_player(conn, data)
-    print player
+
+    while True:
+        answer_data = game.wait_for_answer(player)
+        if answer_data:
+            conn.sendMessage(answer_data)
+        request = conn.wait()
+        print request
+
+    # Thread loop ended
+    conn.sendClose()
 
 
 class CartetsServer(WebSocket):
     def handleMessage(self):
+        if not self.data:
+            return {}
         try:
             data = json.loads(self.data.decode('utf-8'))
             value = data['action']
         except Exception:
-            data = ''
+            data = {}
             value = ''
 
-        if type(data) is dict and value == 'init':
+        if value == 'init':
             thread.start_new_thread(client_thread, (game, self, data))
 
         # self.sendMessage(str(self.data))
+        return data
 
     def handleConnected(self):
         print self.address, 'connected'
 
     def handleClose(self):
         print self.address, 'closed'
+
+    def wait(self):
+        while True:
+            data = self.handleMessage()
+            if data:
+                break
+        return data
+
 
 game = Game()
 server = SimpleWebSocketServer('', 8080, CartetsServer)
