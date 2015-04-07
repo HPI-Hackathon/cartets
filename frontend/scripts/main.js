@@ -86,7 +86,7 @@ function UI (socket) {
     // UI stuff
     templates();
     //self.createCompareView(cards);
-    self.createCardView(cards[0]);
+    //self.createCardView(cards[0]);
 }
 
 UI.prototype.setPosition = function (position) {
