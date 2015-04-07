@@ -2,31 +2,7 @@
 /* eslint quotes: [2, "single"], strict: 0 */
 /* global Handlebars:false */
 
-var connection = new WebSocket('ws://localhost:8080', []);
-
-connection.onopen = function () {
-    console.info('connected to server');
-};
-
-// Log errors
-connection.onerror = function (error) {
-    console.log('WebSocket Error ' + error);
-};
-
-// Log messages from the server
-connection.onmessage = function (e) {
-    // e is event object
-    // server message is in e.data
-    console.log('Server: ' + e.data);
-    switch (e.data.action) {
-        case 'next': console.log('next: ' + e.data.toString()); break;
-        case 'accepted': console.log('accepted'); break;
-        default: break;
-    }
-};
-
 var cardTemplate;
-
 
 function card (title, image, location, price, performance, ez, km, consumption) {
     return {
@@ -51,7 +27,7 @@ function templates () {
     cardTemplate = Handlebars.compile($('#card-template').html());
 }
 
-function UI (socket) {
+function UI () {
     var self = this;
     self.socket = socket;
     self.player = {
@@ -59,7 +35,7 @@ function UI (socket) {
     };
     self.position = null;
 
-    self.$allViews = $('.startView, .compareView, .cardView');
+    self.$allViews = $('.startView, .compareView, .cardView, .waitingView');
 
     $('#usernameForm').submit(function (e) {
         e.preventDefault();
@@ -82,7 +58,7 @@ function UI (socket) {
     });
 
     $('.cardView').on('click', 'button', function () {
-        $('.card button').addClass('disabled');
+        self.disableCardButtons();
         var attributeToCompare = $(this).data('attribute');
         self.socket.send(JSON.stringify({
             action: 'attributeSelected',
@@ -104,6 +80,36 @@ function UI (socket) {
     templates();
     //self.createCompareView(cards);
     //self.createCardView(cards[0]);
+
+    self.socket = new WebSocket('ws://localhost:8080', []);
+
+    self.socket.onopen = function () {
+        console.info('connected to server');
+    };
+
+    // Log errors
+    self.socket.onerror = function (error) {
+        console.log('WebSocket Error ' + error);
+    };
+
+    // Log messages from the server
+    self.socket.onmessage = function (e) {
+        // e is event object
+        // server message is in e.data
+        var response = JSON.parse(e.data);
+        switch (response.action) {
+            case 'accepted':
+                UI.activateView('.waitingView');
+                break;
+            case 'start':
+            case 'next':
+                UI.createCardView(response.data.card);
+                UI.setActivePlayer(response.data.turn);
+                break;
+            default:
+                break;
+        }
+    };
 }
 
 UI.prototype.setPosition = function (position) {
@@ -148,4 +154,14 @@ UI.prototype.activateView = function (view) {
     $(view).show();
 };
 
-var userInterface = new UI(connection);
+UI.prototype.setActivePlayer = function (playerName) {
+    if (playerName !== self.player.name) {
+        UI.disableCardButtons();
+    }
+};
+
+UI.prototype.disableCardButtons = function () {
+    $('.card button').addClass('disabled');
+};
+
+var userInterface = new UI();
