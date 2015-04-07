@@ -21,22 +21,21 @@ def validation(list):
         #for elem in dict:
         elem = random.choice(list)
 
-        if 'images' in elem and 'pw' in elem['attr'] and 'ml' in elem['attr']:
-            if 'csmpt' in elem['attr']:
-                image = elem['images'][0].get('uri')+'_8.jpg'
-                title = elem['title']
-                price = elem['price']['grs']['amount']
-                power = elem['attr']['pw']
-                power = re.search('\d+(?=\s?[pP][sS])',power).group(0)
-                dist = elem['attr']['ml']
-                dist = re.search('^[0-9\.]+', dist).group(0)
-                first = '.'.join(reversed(elem['attr']['fr'].split('/')))
-                consumption = elem['attr']['csmpt']
-                consumption = re.search('^[^0-9]*\d+\,\d+', consumption).group(0).replace(',','.')
-                location = elem['contact']['latLong']['lat'] + ',' + elem['contact']['latLong']['long']
-                current = {'title': title, 'image': image, 'price': price, 'registration': first, 'mileage': dist, 'power': power, 'consumption': consumption, 'location': location}
-                final = json.dumps(current)
-                resList.append(final)
+        if 'images' in elem and 'pw' in elem['attr'] and 'ml' in elem['attr'] and 'csmpt' in elem['attr']:
+            image = elem['images'][0].get('uri')+'_8.jpg'
+            title = elem['title']
+            price = elem['price']['grs']['amount']
+            power = re.search('\d+(?=(\s|\xA0)?[pP][sS])', elem['attr']['pw']).group(0)
+            dist = re.search('^[0-9\.]+', elem['attr']['ml']).group(0)
+            first = '.'.join(reversed(elem['attr']['fr'].split('/')))
+            location = '{:f},{:f}'.format(elem['contact']['latLong']['lat'], elem['contact']['latLong']['lon'])
+            try:
+                consumption = re.search('^[^0-9]*\d+\,\d+', elem['attr']['csmpt']).group(0).replace(',','.')
+            except Exception, e:
+                continue
+            current = {'title': title, 'image': image, 'price': price, 'registration': first, 'mileage': dist, 'power': power, 'consumption': consumption, 'location': location}
+            final = json.dumps(current)
+            resList.append(final)
     return resList
 
 
