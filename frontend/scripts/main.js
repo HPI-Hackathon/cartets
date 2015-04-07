@@ -102,8 +102,8 @@ function UI () {
                 break;
             case 'start':
             case 'next':
-                if (response.data.winnerCard) {
-                    self.createCompareView(response.data.all_cards, response.data.winnerCard, response.data.card);
+                if (response.data.winner_card) {
+                    self.createCompareView(response.data.all_cards, response.data.winner_card, response.data.card);
                 } else {
                     self.startNextRound(response.data.card, response.data.turn);
                 }
@@ -138,7 +138,8 @@ UI.prototype.positionError = function (err) {
 };
 
 UI.prototype.createCompareView = function (cards, winnerCard, nextCard) {
-    this.activateView('.compareView');
+    var self = this;
+    self.activateView('.compareView');
     $('.compareView').html('');
 
     cards.forEach(function (e) {
@@ -146,10 +147,10 @@ UI.prototype.createCompareView = function (cards, winnerCard, nextCard) {
     });
 
     if (nextCard !== undefined) {
-        var nextButton = $('<button>Weiter</button>');
+        var nextButton = $('<button class="btn btn-default">Weiter</button>');
         nextButton.addClass('nextRoundButton');
         nextButton.click(function () {
-            this.createCardView(nextCard);
+            self.createCardView(nextCard);
         });
         $('.compareView').append(nextButton);
     }
@@ -158,7 +159,7 @@ UI.prototype.createCompareView = function (cards, winnerCard, nextCard) {
 UI.prototype.createCardView = function (card) {
     this.activateView('.cardView');
 
-    $('.cardView').html(cardTemplate(JSON.parse(card)));
+    $('.cardView').html(cardTemplate(card));
 };
 
 UI.prototype.activateView = function (view) {
