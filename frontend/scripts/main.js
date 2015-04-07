@@ -29,7 +29,6 @@ function templates () {
 
 function UI () {
     var self = this;
-    self.socket = socket;
     self.player = {
         name: ''
     };
