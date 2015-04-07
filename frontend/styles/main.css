@@ -57,7 +57,7 @@ p {
     width: calc(33% - 20px);
 }
 
-.startView {
+.startView, .waitingView {
     margin-top: 150px;
     text-align: center;
 }
