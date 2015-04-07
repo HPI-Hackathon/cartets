@@ -15,11 +15,16 @@ connection.onerror = function (error) {
 };
 
 // Log messages from the server
-// connection.onmessage = function (e) {
-//     // e is event object
-//     // server message is in e.data
-//     // console.log('Server: ' + e.data);
-// };
+connection.onmessage = function (e) {
+    // e is event object
+    // server message is in e.data
+    console.log('Server: ' + e.data);
+    switch (e.data.action) {
+        case 'next': console.log('next: ' + e.data.toString()); break;
+        case 'accepted': console.log('accepted'); break;
+        default: break;
+    }
+};
 
 var cardTemplate;
 
@@ -72,8 +77,21 @@ function UI (socket) {
             alert('kein Username eingegeben');
         } else {
             data.name = $.trim($('#usernameForm #username').val());
+            self.player.name = data.name;
             self.socket.send(JSON.stringify(data));
         }
+    });
+
+    $('.cardView').on('click', 'button', function () {
+        $('.card button').addClass('disabled');
+        var attributeToCompare = $(this).data('attribute');
+        self.socket.send(JSON.stringify({
+            action: 'attributeSelected',
+            name: self.player.name,
+            data: {
+                attributeToCompare: attributeToCompare
+            }
+        }));
     });
 
     navigator.geolocation.getCurrentPosition(
