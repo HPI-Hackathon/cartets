@@ -19,7 +19,10 @@ p {
 	margin: 0;
 }
 
-.cardView {
+.card{
+	display: inline-block;
+	width: calc(33% - 20px);
+	max-width: 400px;
 	background-color: #FFF;
 	-webkit-box-shadow: 2px 5px 10px 0 rgba(0,0,0,0.8);
 	box-shadow: 2px 5px 10px 0 rgba(0,0,0,0.8);
@@ -27,6 +30,18 @@ p {
 	border-radius: 10px 10px 10px 10px;
 	padding: 1em;
 	margin: 10px;
+}
+
+.card > .container {
+	max-width: 100%;
+}
+
+.cardView {
+	max-width: 100%;
+}
+
+.cardView > .card {
+	width: 100%;
 }
 
 .statKey {
@@ -38,21 +53,7 @@ p {
 	float: right;
 }
 
-.rightCard {
-	left: -170%;
-}
-
-.middleCard {
-	left: -85%;
-}
-
-.leftCard {
-	left: 0;
-}
-
 .compareView {
 	position: relative;
-	width: 270%;
-	-webkit-transition: left 1s; /* Safari */
-    transition: left 1s;
+	width: 280%;
 }

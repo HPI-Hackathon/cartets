@@ -21,7 +21,7 @@ connection.onerror = function (error) {
 //     // console.log('Server: ' + e.data);
 // };
 
-cardTemplate = undefined;
+var cardTemplate;
 
 
 function card (title, image, location, price, performance, ez, km, consumption) {
@@ -37,7 +37,7 @@ function card (title, image, location, price, performance, ez, km, consumption) 
     };
 }
 
-cards = [
+var cards = [
     card('Audi A6', 'http://lorempixel.com/400/300/transport/', 'August-Bebel-Str. 4, 14482 Potsdam', '34000', '140', '2006', '23000', '7'),
     card('VW Polo', 'http://i.ebayimg.com/00/s/NjAwWDgwMA==/z/IVgAAOSwPhdU-FPW/$_8.jpg', 'August-Bebel-Str. 12, 15345 Rehfelde', '5600', '90', '1997', '230000', '6'),
     card('Kaputte Karre', 'http://i.ebayimg.com/00/s/NDgwWDY0MA==/$T2eC16VHJGYFFlLe3qSvBReifcZW2!~~48_8.jpg', 'Großer Stern, 10355 Berlin', '300', '80', '2000', '104000', '14')
@@ -55,7 +55,7 @@ function UI (socket) {
     };
     self.position = null;
 
-    self.$allViews = $('.startView, .compareView');
+    self.$allViews = $('.startView, .compareView, .cardView');
 
     $('#usernameForm').submit(function (e) {
         e.preventDefault();
@@ -85,7 +85,8 @@ function UI (socket) {
 
     // UI stuff
     templates();
-    // createCompareView(cards);
+    //self.createCompareView(cards);
+    self.createCardView(cards[0]);
 }
 
 UI.prototype.setPosition = function (position) {
@@ -116,11 +117,14 @@ UI.prototype.createCompareView = function (cards) {
     this.activateView('.compareView');
 
     cards.forEach(function (e) {
-        var card = $('<div class="col-xs-4" style="padding: 0;"></div>');
-        card.append(cardTemplate(e));
-
-        $('.compareView > .container > .row').append(card);
+        $('.compareView').append(cardTemplate(e));
     });
+};
+
+UI.prototype.createCardView = function (card) {
+    this.activateView('.cardView');
+
+    $('.cardView').append(cardTemplate(card));
 };
 
 UI.prototype.activateView = function (view) {
