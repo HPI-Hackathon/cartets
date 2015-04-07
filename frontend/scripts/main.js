@@ -5,7 +5,6 @@
 var connection = new WebSocket('ws://localhost:8080', []);
 
 connection.onopen = function () {
-    connection.send('Ping');
     console.info('connected to server');
 };
 
@@ -108,7 +107,6 @@ function UI (socket) {
 }
 
 UI.prototype.setPosition = function (position) {
-    console.log('got position');
     this.position = {
         lat: position.coords.latitude,
         lng: position.coords.longitude
