@@ -1,5 +1,6 @@
 /* eslint-env browser, jquery */
 /* eslint quotes: [2, "single"], strict: 0 */
+/* global Handlebars:false */
 
 var connection = new WebSocket('ws://localhost:8080', []);
 
@@ -13,11 +14,11 @@ connection.onerror = function (error) {
     console.log('WebSocket Error ' + error);
 };
 
-// // Log messages from the server
+// Log messages from the server
 // connection.onmessage = function (e) {
 //     // e is event object
 //     // server message is in e.data
-//     console.log('Server: ' + e.data);
+//     // console.log('Server: ' + e.data);
 // };
 
 cardTemplate = undefined;
@@ -33,26 +34,17 @@ function card (title, image, location, price, performance, ez, km, consumption) 
         ez: ez,
         km: km,
         consumption: consumption
-    }
+    };
 }
 
 cards = [
     card('Audi A6', 'http://lorempixel.com/400/300/transport/', 'August-Bebel-Str. 4, 14482 Potsdam', '34000', '140', '2006', '23000', '7'),
     card('VW Polo', 'http://i.ebayimg.com/00/s/NjAwWDgwMA==/z/IVgAAOSwPhdU-FPW/$_8.jpg', 'August-Bebel-Str. 12, 15345 Rehfelde', '5600', '90', '1997', '230000', '6'),
     card('Kaputte Karre', 'http://i.ebayimg.com/00/s/NDgwWDY0MA==/$T2eC16VHJGYFFlLe3qSvBReifcZW2!~~48_8.jpg', 'Großer Stern, 10355 Berlin', '300', '80', '2000', '104000', '14')
-]
+];
 
 function templates () {
-    cardTemplate = Handlebars.compile($("#card-template").html());
-}
-
-function createCompareView (cards) {
-    cards.forEach(function (e) {
-        var card = $('<div class="col-xs-4" style="padding: 0;"></div>');
-        card.append(cardTemplate(e));
-
-        $('.compareView > .container > .row').append(card);
-    });
+    cardTemplate = Handlebars.compile($('#card-template').html());
 }
 
 function UI (socket) {
@@ -63,51 +55,77 @@ function UI (socket) {
     };
     self.position = null;
 
-    self.setPosition = function (position) {
-        console.log('got position');
-        self.position = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-        };
-        $('#locationMessage').hide();
-        $('#usernameForm').show();
-    };
-
-    self.positionError = function (err) {
-        var message = '';
-        if (err.code === 1) {
-            message = 'Du musst deinen Standort mitteilen, um spielen zu k\u00f6nnen.';
-        } else if (err.code === 2) {
-            message = 'Dein Standort konnte nicht ermittelt werden.';
-        }
-        $('#locationMessage')
-            .removeClass('panel-default')
-            .addClass('panel-danger');
-        $('#locationMessage .panel-body').html(message);
-        console.log(err.code);
-    };
+    self.$allViews = $('.startView, .compareView');
 
     $('#usernameForm').submit(function (e) {
-        var data = {
-            action: 'start',
-            username: '',
-            lat: self.position.latitude,
-            lng: self.position.longitude
-        };
         e.preventDefault();
+        var data = {
+            action: 'init',
+            name: '',
+            data: {
+                lat: self.position.lat,
+                long: self.position.lng
+            }
+        };
+
         if ($.trim($('#usernameForm #username').val()) === '') {
             alert('kein Username eingegeben');
         } else {
+            data.name = $.trim($('#usernameForm #username').val());
             self.socket.send(JSON.stringify(data));
         }
     });
 
-    navigator.geolocation.getCurrentPosition(self.setPosition, self.positionError);
+    navigator.geolocation.getCurrentPosition(
+        function (position) {
+            self.setPosition(position);
+        },
+        self.positionError
+    );
 
     // UI stuff
     templates();
-    createCompareView(cards);
+    // createCompareView(cards);
 }
 
+UI.prototype.setPosition = function (position) {
+    console.log('got position');
+    this.position = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+    };
+    $('#locationMessage').hide();
+    $('#usernameForm').show();
+};
+
+UI.prototype.positionError = function (err) {
+    var message = '';
+    if (err.code === 1) {
+        message = 'Du musst deinen Standort mitteilen, um spielen zu k\u00f6nnen.';
+    } else if (err.code === 2) {
+        message = 'Dein Standort konnte nicht ermittelt werden.';
+    }
+    $('#locationMessage')
+        .removeClass('panel-default')
+        .addClass('panel-danger');
+    $('#locationMessage .panel-body').html(message);
+    console.log(err.code);
+};
+
+UI.prototype.createCompareView = function (cards) {
+    this.activateView('.compareView');
+
+    cards.forEach(function (e) {
+        var card = $('<div class="col-xs-4" style="padding: 0;"></div>');
+        card.append(cardTemplate(e));
+
+        $('.compareView > .container > .row').append(card);
+    });
+};
+
+UI.prototype.activateView = function (view) {
+    this.$allViews.hide();
+    $(view).show();
+};
 
 var userInterface = new UI(connection);
