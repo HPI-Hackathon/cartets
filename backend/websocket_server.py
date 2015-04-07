@@ -1,5 +1,6 @@
 import thread
 import json
+import time
 from SimpleWebSocketServer import WebSocket, SimpleWebSocketServer
 from game import Game
 
@@ -46,6 +47,8 @@ class CartetsServer(WebSocket):
             data = self.handleMessage()
             if data:
                 break
+            else:
+                time.sleep(0.5)
         return data
 
 
