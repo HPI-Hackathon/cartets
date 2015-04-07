@@ -4,15 +4,15 @@
 
 var cardTemplate;
 
-function card (title, image, location, price, performance, ez, km, consumption) {
+function card (title, image, location, price, power, registration, mileage, consumption) {
     return {
         title: title,
         image: image,
         location: location,
         price: price,
-        performance: performance,
-        ez: ez,
-        km: km,
+        power: power,
+        registration: registration,
+        mileage: mileage,
         consumption: consumption
     };
 }
