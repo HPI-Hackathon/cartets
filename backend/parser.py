@@ -4,7 +4,7 @@ import json
 
 def main():
     #response = urllib2.urlopen('http://m.mobile.de/svc/s/?ll=' + ll)
-    response = urllib2.urlopen('http://m.mobile.de/svc/s/?ll=52.516,13.376')
+    response = urllib2.urlopen('http://m.mobile.de/svc/s/?ll=52.516,13.376&s=Car')
     data = json.load(response)['items']
     gameCars = validation(data)
     print gameCars
