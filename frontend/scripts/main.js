@@ -160,7 +160,7 @@ UI.prototype.createCompareView = function (cards, winnerCard, nextCard) {
 UI.prototype.createCardView = function (card) {
     this.activateView('.cardView');
 
-    $('.cardView').html(cardTemplate(card));
+    $('.cardView').html(cardTemplate(JSON.parse(card)));
 };
 
 UI.prototype.activateView = function (view) {
