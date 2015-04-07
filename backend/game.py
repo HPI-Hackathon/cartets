@@ -15,7 +15,7 @@ class Game:
     def add_player(self, conn, data):
         player = Player(conn, data)
         self.players[player.get_name()] = player
-        conn.send(json.dumps({'action': 'accepted', 'data': ''}))
+        conn.sendMessage(json.dumps({'action': 'accepted', 'data': ''}))
         return player
 
     def wait_for_answer(self, player):
@@ -23,6 +23,7 @@ class Game:
         if not self.running() and len(self.players) == 3:
             starter = self.start_game()
             data = {'turn': starter.get_name(), 'cards': []}
+            # TODO: hand out cards
             return json.dumps({'action': 'start', 'data': data})
 
         return self.handle_round(player)
@@ -30,6 +31,7 @@ class Game:
     def handle_round(self, player):
         # TODO: Add actual functionality
         cards = [player.get_card() for player in self.players.values()]
+        # Only hand out current card
         data = {'turn': self.turn.get_name(), 'cards': cards}
         return json.dumps({'action': 'next', 'data': data})
 

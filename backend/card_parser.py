@@ -6,6 +6,7 @@ import random
 
 def main(long,lat):
     response = urllib2.urlopen('http://m.mobile.de/svc/s/?ll=' + str(long) + ',' + str(lat) + '&s=Car&psz=100&sb=doc')
+    data = json.load(response)['items']
     gameCars = validation(data)
     return gameCars
 
