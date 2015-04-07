@@ -21,6 +21,7 @@ class Game:
         player = Player(conn, data)
         self.players[player.get_name()] = player
         conn.sendMessage(json.dumps({'action': 'accepted', 'data': ''}))
+        print "Added player:", player.get_name()
         return player
 
     def wait_for_answer(self, player):
@@ -29,26 +30,31 @@ class Game:
             if len(self.players) == 3:
                 self.start_game()
                 self.running = True
-                # TODO: hand out cards
                 return
             else:
-                while not self.running:
-                    time.sleep(0.5)
+                print player.get_name(), "is waiting to start..."
+                #while not self.running:
+                #    time.sleep(0.5)
                 return
 
-        while self.is_evaluated:
-            time.sleep(0.5)
+        print player.get_name(), "is waiting for evaluation..."
+        #while not self.is_evaluated:
+        #    time.sleep(0.5)
 
         return
 
     def attribute_selected(self, data):
+        print "Attribute selected", data
         # Get all cards with players
-        cards = [(player, player.get_card()) for player in self.players]
-        all_cards = [card.get_values() for _, card in cards]
+        player_cards = self.players.items()
+        cards = [(player, player.get_card()) for name, player in player_cards]
+        all_cards = [card.get_values() for player, card in cards]
 
         # Get current card and compare it
-        cur_card = cards.pop(self.turn.get_name())
-        winner, card = cur_card.compare(cards)
+        cur_card = cards[[x for x, _ in cards].index(self.turn)][1]
+        attr = data['data']['attributeToCompare']
+        winner, card = cur_card.compare(attr, cards)
+        print "Winner:", winner.get_name()
 
         # Update after comparison
         self.turn = winner
@@ -57,6 +63,7 @@ class Game:
         data['all_cards'] = all_cards
         data['winner_card'] = card.get_values()
         self.is_evaluated = True
+        print "eval"
 
         # Send data to players
         for name, player in self.players.items():
@@ -65,10 +72,12 @@ class Game:
             conn.sendMessage(json.dumps({'action': 'start', 'data': data}))
 
     def start_game(self):
+        random.seed(None)
         name = random.choice(self.players.keys())
         self.turn = self.players[name]
         data = {'turn': name}
         self.running = True
+        print "The game was started.", name, "begins."
         for name, player in self.players.items():
             data['card'] = player.next_card()
             conn = player.get_connection()
@@ -95,7 +104,7 @@ class Player:
         long = player_data['data']['long']
         lat = player_data['data']['lat']
         cards = card_parser.main(lat, long)
-        return [Card(values) for values in cards]
+        return [Card(json.loads(values)) for values in cards]
 
     def next_card(self):
         self.current_card = self.cards.pop(0)
@@ -115,9 +124,16 @@ class Card:
                             'registration': max,
                             'consumption': min}
 
-    def compare(self, attr, player_card):
+    def compare(self, attr, player_cards):
         comp = self.comparisons[attr]
-        return comp(player_card, key=lambda x: float(x[1][attr]))
+        print "card:", player_cards[1][1]
+        print "attr:", attr
+        print "card:", player_cards[1][1].get_values()
+        print "type:", type(player_cards[1][1].get_values())
+        return comp(player_cards, key=lambda x: float(x[1].get_value(attr)))
 
     def get_values(self):
         return self.values
+
+    def get_value(self, attr):
+        return self.values[attr]

@@ -23,11 +23,15 @@ def client_thread(game, conn, data):
         if answer_data:
             conn.sendMessage(answer_data)
         if game.get_turn() is player:
+            print "It's", player.get_name(), "'s turn."
             while True:
+                print "Server is waiting..."
                 request = conn.wait()
                 data, value = to_json(request)
+                print "Data from", player.get_name(), ":", data
                 if value == 'selectedAttribute':
                     break
+            print "An attribute was selected."
             game.attribute_selected(data)
 
     # Thread loop ended
@@ -36,15 +40,17 @@ def client_thread(game, conn, data):
 
 class CartetsServer(WebSocket):
     def handleMessage(self):
-        if not self.data:
-            return {}
         data, value = to_json(self.data)
 
+        print "value", value
         if value == 'init':
-            thread.start_new_thread(client_thread, (game, self, data))
+            player = game.add_player(self, data)
+            answer_data = game.wait_for_answer(player)
+            if answer_data:
+                self.sendMessage(answer_data)
 
-        # self.sendMessage(str(self.data))
-        return data
+        if value == 'attributeSelected':
+            game.attribute_selected(data)
 
     def handleConnected(self):
         print self.address, 'connected'
@@ -54,11 +60,12 @@ class CartetsServer(WebSocket):
 
     def wait(self):
         while True:
-            data = self.handleMessage()
+            data = self.handlePacket()
             if data:
                 break
             else:
-                time.sleep(0.5)
+                time.sleep(0.01)
+        print "Finished waiting :) for:", data
         return data
 
 
