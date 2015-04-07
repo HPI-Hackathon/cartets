@@ -98,12 +98,12 @@ function UI () {
         var response = JSON.parse(e.data);
         switch (response.action) {
             case 'accepted':
-                UI.activateView('.waitingView');
+                self.activateView('.waitingView');
                 break;
             case 'start':
             case 'next':
-                UI.createCardView(response.data.card);
-                UI.setActivePlayer(response.data.turn);
+                self.createCardView(response.data.card);
+                self.setActivePlayer(response.data.turn);
                 break;
             default:
                 break;
@@ -154,8 +154,8 @@ UI.prototype.activateView = function (view) {
 };
 
 UI.prototype.setActivePlayer = function (playerName) {
-    if (playerName !== self.player.name) {
-        UI.disableCardButtons();
+    if (playerName !== this.player.name) {
+        this.disableCardButtons();
     }
 };
 
