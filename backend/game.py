@@ -3,21 +3,14 @@
 import json
 import random
 
+import parser
+
 
 class Game():
     def __init__(self):
         self.players = {}
         self.turn = None
         self.running = False
-        # TODO: Check if comparisons are good
-        self.comparisons = {'price': min,
-                            'power': max,
-                            'milage': min,
-                            'registration': min,
-                            'consumption': min}
-
-    def get_comparisons(self):
-        return self.comparisons
 
     def add_player(self, conn, data):
         player = Player(conn, data)
@@ -50,7 +43,7 @@ class Player():
     def __init__(self, conn, data):
         self.name = data['name']
         self.connection = conn
-        self.cards = []
+        self.cards = self.receive_cards(data)
         self.current_card = None
 
     def get_name(self):
@@ -59,13 +52,24 @@ class Player():
     def get_card(self):
         return self.current_card
 
+    def receive_cards(self, data):
+        long = data['long']
+        lat = data['lat']
+        cards = parser.main(long, lat)
+        self.cards = [Card(values) for values in cards]
+
 
 class Card():
-    def __init__(self, game):
-        self.data = {}
-        self.game_comp = game.get_comparisons()
+    def __init__(self, values):
+        self.values = values
+        # TODO: Check if comparisons are good
+        self.comparisons = {'price': min,
+                            'power': max,
+                            'milage': min,
+                            'registration': min,
+                            'consumption': min}
 
     def compare(self, attr, cards):
-        comp = self.game_comp[attr]
+        comp = self.comparisons[attr]
         winner_card = comp(cards)
         return winner_card
