@@ -31,7 +31,7 @@ def validation(list):
             location = '{:f},{:f}'.format(elem['contact']['latLong']['lat'], elem['contact']['latLong']['lon'])
             url = elem['url']
             try:
-                consumption = re.search('^[^0-9]*\d+\,\d+', elem['attr']['csmpt']).group(0).replace(',','.')
+                consumption = re.search('\d+\,\d+', elem['attr']['csmpt']).group(0).replace(',','.')
             except Exception, e:
                 continue
             current = {'title': title, 'image': image, 'price': price, 'registration': first, 'mileage': dist, 'power': power, 'consumption': consumption, 'location': location, 'url': url}
