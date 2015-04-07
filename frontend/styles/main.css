@@ -1,0 +1,39 @@
+body {
+	background-color: #BBB;
+}
+
+h3 {
+	margin-top: 0;
+}
+
+.location {
+	position: relative;
+	right: 10px;
+}
+
+p.location small {
+	font-size: 0.7em;
+}
+
+p {
+	margin: 0;
+}
+
+.cardView {
+	background-color: #FFF;
+	-webkit-box-shadow: 2px 5px 10px 0 rgba(0,0,0,0.8);
+	box-shadow: 2px 5px 10px 0 rgba(0,0,0,0.8);
+	-webkit-border-radius: 10px 10px 10px 10px;
+	border-radius: 10px 10px 10px 10px;
+	padding: 1em;
+	margin: 10px;
+}
+
+.statKey {
+	float: left;
+	color: #BBB;
+}
+
+.statValue {
+	float: right;
+}
