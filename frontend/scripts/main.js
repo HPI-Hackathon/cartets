@@ -76,7 +76,7 @@ function UI (socket) {
     self.positionError = function (err) {
         var message = '';
         if (err.code === 1) {
-            message = 'Du musst deinen Standort mitteilen, um spielen zu können.';
+            message = 'Du musst deinen Standort mitteilen, um spielen zu k\u00f6nnen.';
         } else if (err.code === 2) {
             message = 'Dein Standort konnte nicht ermittelt werden.';
         }
