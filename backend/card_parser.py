@@ -2,6 +2,7 @@
 import urllib2
 import json
 import random
+import re
 
 # \d+(?=\s?[pP][sS])
 
@@ -11,6 +12,8 @@ def main(long,lat):
     gameCars = validation(data)
     return gameCars
 
+
+# ^[0-9\.]+
 
 def validation(list):
     resList = []
@@ -24,10 +27,14 @@ def validation(list):
                 title = elem['title']
                 price = elem['price']['grs']['amount']
                 power = elem['attr']['pw']
+                power = re.search('\d+(?=\s?[pP][sS])',power).group(0)
                 dist = elem['attr']['ml']
-                first = elem['attr']['fr']
+                dist = re.search('^[0-9\.]+', dist).group(0)
+                first = '.'.join(reversed(elem['attr']['fr'].split('/')))
                 consumption = elem['attr']['csmpt']
-                current = {'title': title, 'image': image, 'price': price, 'registration': first, 'mileage': dist, 'power': power, 'consumption': consumption}
+                consumption = re.search('^[^0-9]*\d+\,\d+', consumption).group(0).replace(',','.')
+                location = elem['contact']['latLong']['lat'] + ',' + elem['contact']['latLong']['long']
+                current = {'title': title, 'image': image, 'price': price, 'registration': first, 'mileage': dist, 'power': power, 'consumption': consumption, 'location': location}
                 final = json.dumps(current)
                 resList.append(final)
     return resList
