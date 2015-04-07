@@ -23,11 +23,11 @@ def validation(list):
                 price = elem['price']['grs']['amount']
                 power = elem['attr']['pw']
                 dist = elem['attr']['ml']
-                fr = elem['attr']['fr']
+                first = elem['attr']['fr']
                 consumption = elem['attr']['csmpt']
-                current = {title: (image, price, fr, dist, power, consumption)}
-                resList.append(current)
-
+                current = {'title': title, 'image': image, 'price': price, 'first': first, 'dist': dist, 'power': power, 'consumption': consumption}
+                final = json.dumps(current)
+                resList.append(final)
     return resList
 
 
