@@ -75,10 +75,7 @@ function UI () {
         self.positionError
     );
 
-    // UI stuff
     templates();
-    //self.createCompareView(cards);
-    //self.createCardView(cards[0]);
 
     self.socket = new WebSocket('ws://localhost:8080', []);
 
@@ -95,6 +92,8 @@ function UI () {
     self.socket.onmessage = function (e) {
         // e is event object
         // server message is in e.data
+        console.log('Server: ', e.data);
+
         var response = JSON.parse(e.data);
         switch (response.action) {
             case 'accepted':
@@ -102,8 +101,11 @@ function UI () {
                 break;
             case 'start':
             case 'next':
-                self.createCardView(response.data.card);
-                self.setActivePlayer(response.data.turn);
+                if (response.data.winnerCard) {
+                    self.createCompareView(response.data.all_cards, response.data.winnerCard, response.data.card);
+                } else {
+                    self.startNextRound(response.data.card, response.data.turn);
+                }
                 break;
             default:
                 break;
@@ -134,18 +136,28 @@ UI.prototype.positionError = function (err) {
     console.log(err.code);
 };
 
-UI.prototype.createCompareView = function (cards) {
+UI.prototype.createCompareView = function (cards, winnerCard, nextCard) {
     this.activateView('.compareView');
+    $('.compareView').html('');
 
     cards.forEach(function (e) {
         $('.compareView').append(cardTemplate(e));
     });
+
+    if (nextCard !== undefined) {
+        var nextButton = $('<button>Weiter</button>');
+        nextButton.addClass('nextRoundButton');
+        nextButton.click(function () {
+            this.createCardView(nextCard);
+        });
+        $('.compareView').append(nextButton);
+    }
 };
 
 UI.prototype.createCardView = function (card) {
     this.activateView('.cardView');
 
-    $('.cardView').append(cardTemplate(card));
+    $('.cardView').html(cardTemplate(card));
 };
 
 UI.prototype.activateView = function (view) {
@@ -161,6 +173,11 @@ UI.prototype.setActivePlayer = function (playerName) {
 
 UI.prototype.disableCardButtons = function () {
     $('.card button').addClass('disabled');
+};
+
+UI.prototype.startNextRound = function (card, turn) {
+    this.createCardView(card);
+    this.setActivePlayer(turn);
 };
 
 var userInterface = new UI();
