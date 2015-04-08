@@ -9,64 +9,61 @@ import card_parser
 class Game:
     def __init__(self):
         self.players = {}
-        self.turn = None
-        self.running = False
-        self.is_evaluated = False
-
-    def get_turn(self):
-        return self.turn
 
     def add_player(self, conn, data):
         player = Player(conn, data)
         self.players[player.get_name()] = player
         conn.sendMessage(json.dumps({'action': 'accepted', 'data': ''}))
         print "Added player:", player.get_name()
-        return player
 
-    def wait_for_answer(self, player):
-        # Initial start of game
-        if not self.running:
-            if len(self.players) == 3:
-                self.start_game()
-                self.running = True
-                return
-            else:
-                return
-        return
+    def check_for_start(self):
+        if len(self.players) == 3:
+            self.start_game()
 
     def attribute_selected(self, data):
         # Get all cards with players
         player_cards = self.players.items()
-        cards = [(player, player.get_card()) for name, player in player_cards]
-        all_cards = [card.get_values() for player, card in cards]
+        cards = [(player, player.get_card()) for _, player in player_cards]
+        all_card_values = [card.get_values() for player, card in cards]
 
         # Get current card and compare it
-        cur_card = cards[[x for x, _ in cards].index(self.turn)][1]
         attr = data['data']['attributeToCompare']
-        winner, card = cur_card.compare(attr, cards)
+        winner, card = Card.compare(attr, cards)
+        winner.add_cards([card for _, card in cards])
+        data = {'all_cards': all_card_values, 'winner_card': card.get_values()}
+
+        # Check if game has ended
+        if self.check_game_end():
+            data['loser'] = winner.get_name()
+            self.broadcast(data, 'end', next_card=False)
+            self.end_connections()
 
         # Update after comparison
-        self.turn = winner
-        winner.add_cards([card for _, card in cards])
         data = {'turn': winner.get_name()}
-        data['all_cards'] = all_cards
-        data['winner_card'] = card.get_values()
-        self.is_evaluated = True
-        self.broadcast(data)
+        self.broadcast(data, 'next')
 
     def start_game(self):
         random.seed(None)
-        name = random.choice(self.players.keys())
-        self.turn = self.players[name]
+        name, player = random.choice(self.players.items())
         data = {'turn': name}
-        self.running = True
-        self.broadcast(data)
+        self.broadcast(data, 'start')
 
-    def broadcast(self, data):
+    def check_game_end(self):
         for name, player in self.players.items():
-            data['card'] = player.next_card()
+            if not player.has_cards():
+                return True
+        return False
+
+    def broadcast(self, data, action, next_card=True):
+        for name, player in self.players.items():
+            if next_card:
+                data['card'] = player.next_card()
             conn = player.get_connection()
-            conn.sendMessage(json.dumps({'action': 'start', 'data': data}))
+            conn.sendMessage(json.dumps({'action': action, 'data': data}))
+
+    def end_connections(self):
+        for _, player in self.players.items():
+            player.get_connection().sendClose()
 
 
 class Player:
@@ -98,24 +95,24 @@ class Player:
     def add_cards(self, cards):
         self.cards.extend(cards)
 
+    def has_cards(self):
+        return len(self.cards) > 0
+
 
 class Card:
+    comparisons = {'price': min,
+                   'power': max,
+                   'mileage': min,
+                   'registration': max,
+                   'consumption': min}
+
     def __init__(self, values):
         self.values = values
-        # TODO: Check if comparisons are good
-        self.comparisons = {'price': min,
-                            'power': max,
-                            'mileage': min,
-                            'registration': max,
-                            'consumption': min}
 
-    def compare(self, attr, player_cards):
-        comp = self.comparisons[attr]
-        for player, card in player_cards:
-            print card.get_values()
-        res = comp(player_cards, key=lambda pair: float(pair[1].get(attr)))
-        print res
-        return res
+    @staticmethod
+    def compare(attr, player_cards):
+        comp = Card.comparisons[attr]
+        return comp(player_cards, key=lambda pair: float(pair[1].get(attr)))
 
     def get_values(self):
         return self.values
