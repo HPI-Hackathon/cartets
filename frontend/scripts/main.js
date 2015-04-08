@@ -19,9 +19,9 @@ function card (title, image, location, price, power, registration, mileage, cons
 }
 
 var cards = [
-    card('Audi A6 long long long long long long', 'lorempixel.com/400/300/transport/', 'August-Bebel-Str. 4, 14482 Potsdam', '34000', '140', '2006', '23000', '7'),
-    card('VW Polo', 'i.ebayimg.com/00/s/NjAwWDgwMA==/z/IVgAAOSwPhdU-FPW/$_8.jpg', 'August-Bebel-Str. 12, 15345 Rehfelde', '5600', '90', '1997', '230000', '6'),
-    card('Kaputte Karre', 'i.ebayimg.com/00/s/NDgwWDY0MA==/$T2eC16VHJGYFFlLe3qSvBReifcZW2!~~48_8.jpg', 'Großer Stern, 10355 Berlin', '300', '80', '2000', '104000', '14')
+    card('Audi A6 long long long long long long', 'lorempixel.com/400/300/transport/', 'August-Bebel-Str. 4, 14482 Potsdam', '34000', '140', '2006', '23000', '7', 'http://google.de/'),
+    card('VW Polo', 'i.ebayimg.com/00/s/NjAwWDgwMA==/z/IVgAAOSwPhdU-FPW/$_8.jpg', 'August-Bebel-Str. 12, 15345 Rehfelde', '5600', '90', '1997', '230000', '6', 'http://google.de/'),
+    card('Kaputte Karre', 'i.ebayimg.com/00/s/NDgwWDY0MA==/$T2eC16VHJGYFFlLe3qSvBReifcZW2!~~48_8.jpg', 'Großer Stern, 10355 Berlin', '300', '80', '2000', '104000', '14', 'http://google.de/')
 ];
 
 function templates () {
@@ -129,6 +129,7 @@ function UI () {
 
     //self.createCardView(cards[0]);
     //self.createCompareView(cards);
+    //$('.compareView .card:nth-child(2)').addClass('winner');
 }
 
 UI.prototype.setPosition = function (position) {
