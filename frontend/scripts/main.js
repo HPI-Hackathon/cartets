@@ -195,11 +195,11 @@ UI.prototype.setInstruction = function (text, type) {
 };
 
 UI.prototype.highlightPlayer = function (playerName) {
-    $('#players a').each(function ($elem) {
-        if ($elem.data('player') === playerName) {
-            $elem.addClass('active');
+    $('#players a').each(function (i, elem) {
+        if ($(elem).data('player') === playerName) {
+            $(elem).addClass('active');
         } else {
-            $elem.removeClass('active');
+            $(elem).removeClass('active');
         }
     });
 };

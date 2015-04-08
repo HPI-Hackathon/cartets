@@ -88,6 +88,11 @@ p {
 	margin: auto;
 }
 
+#players {
+	max-width: 400px;
+	margin: auto;
+}
+
 .winner {
 	-webkit-animation: glowIt 1.5s infinite;
 	animation: glowIt 1.5s infinite;
