@@ -72,6 +72,11 @@ p {
     text-align: center;
 }
 
+.progress {
+    position: fixed;
+    width: 100%;
+}
+
 .progress-bar {
     -webkit-transition: none;
     transition: none;
