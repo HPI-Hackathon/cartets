@@ -156,7 +156,7 @@ UI.prototype.createCompareView = function (cards, winnerCard, attributeCompared,
     $($('.card a[href="' + winnerCard.url + '"]').parents('.card')[0]).addClass('winner');
 
     if (nextCard !== undefined) {
-        var endTime = Date.now() + 12000;
+        var endTime = Date.now() + 9000;
         $('.progress').show();
         var interval = setInterval(function () {
             var currentTime = Date.now();
@@ -166,7 +166,7 @@ UI.prototype.createCompareView = function (cards, winnerCard, attributeCompared,
                 $('.progress').hide();
                 self.startNextRound(nextCard, nextTurn);
             } else {
-                $('.progress .progress-bar').width(((endTime - currentTime) / 120).toString() + '%');
+                $('.progress .progress-bar').width(((endTime - currentTime) / 90).toString() + '%');
             }
         }, 75);
     }
