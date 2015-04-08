@@ -33,8 +33,9 @@ class Game:
         data = {'all_cards': all_card_values, 'winner_card': card.get_values()}
 
         # Check if game has ended
-        if self.check_game_end():
-            data['loser'] = winner.get_name()
+        has_ended, player = self.check_game_end()
+        if has_ended:
+            data['loser'] = player
             self.broadcast(data, 'end', next_card=False)
             self.end_connections()
 
@@ -53,8 +54,8 @@ class Game:
         # End if any player has no cards left
         for name, player in self.players.items():
             if not player.has_cards():
-                return True
-        return False
+                return True, player.get_name()
+        return False, ''
 
     def broadcast(self, data, action, next_card=True):
         # Send data to all players
@@ -91,6 +92,7 @@ class Player:
         long = player_data['data']['long']
         lat = player_data['data']['lat']
         cards = card_parser.main(lat, long, picked_cards)
+        print "cards:", picked_cards
         return [Card(json.loads(values)) for values in cards]
 
     def next_card(self):

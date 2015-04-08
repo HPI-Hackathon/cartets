@@ -18,14 +18,16 @@ def generate_list(list, card_list):
     res_list = []
     while len(res_list) <= 10:
         elem = random.choice(list)
-        if elem not in res_list:
-            item = validate_entry(elem)
-            if item:
-                res_list.append(item)
+        if elem['id'] in card_list:
+            continue
+
+        item = validate_entry(elem, card_list)
+        if item:
+            res_list.append(item)
     return res_list
 
 
-def validate_entry(elem):
+def validate_entry(elem, card_list):
     attr_keys = ['pw', 'ml', 'csmpt']
     if 'images' in elem and all(key in elem['attr'] for key in attr_keys):
         try:
@@ -41,7 +43,8 @@ def validate_entry(elem):
 
         except:
             return
-        card_list.append(elem)
+
+        card_list.append(elem['id'])
         return json.dumps({'title': title,
                            'image': image,
                            'price': price,
