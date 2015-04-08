@@ -1,24 +1,23 @@
-# Client thread started for each player
 import urllib2
 import json
 import random
 import re
 
 # \d+(?=\s?[pP][sS])
+# ^[0-9\.]+
 
-def main(long,lat):
-    response = urllib2.urlopen('http://m.mobile.de/svc/s/?ll=' + str(long) + ',' + str(lat) + '&s=Car&psz=100&sb=doc')
+
+def main(long, lat):
+    url = 'http://m.mobile.de/svc/s/?ll=' + str(long) + ',' + str(lat) + '&s=Car&psz=100&sb=doc'
+    response = urllib2.urlopen(url)
     data = json.load(response)['items']
     gameCars = validation(data)
     return gameCars
 
 
-# ^[0-9\.]+
-
 def validation(list):
-    resList = []
-    while len(resList) <= 20:
-        #for elem in dict:
+    res_list = []
+    while len(res_list) <= 10:
         elem = random.choice(list)
 
         if 'images' in elem and 'pw' in elem['attr'] and 'ml' in elem['attr'] and 'csmpt' in elem['attr']:
@@ -32,12 +31,21 @@ def validation(list):
             url = elem['url']
             try:
                 consumption = re.search('\d+\,\d+', elem['attr']['csmpt']).group(0).replace(',','.')
-            except Exception, e:
+            except:
                 continue
-            current = {'title': title, 'image': image, 'price': price, 'registration': first, 'mileage': dist, 'power': power, 'consumption': consumption, 'location': location, 'url': url}
+            current = {'title': title,
+                       'image': image,
+                       'price': price,
+                       'registration': first,
+                       'mileage': dist,
+                       'power': power,
+                       'consumption': consumption,
+                       'location': location,
+                       'url': url}
             final = json.dumps(current)
-            resList.append(final)
-    return resList
+            res_list.append(final)
+
+    return res_list
 
 
 if __name__ == '__main__':
