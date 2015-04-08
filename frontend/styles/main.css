@@ -58,10 +58,7 @@ p {
 .compareView {
     position: relative;
     -webkit-transform-origin: top left;
-    -moz-transform-origin: top left;
     transform-origin: top left;
-    -ms-transform-origin: top left;
-    -ms-transform: scale(0.75);
     -webkit-transform: scale(0.75);
     transform: scale(0.75);
 }
@@ -78,4 +75,23 @@ p {
 .progress-bar {
     -webkit-transition: none;
     transition: none;
+}
+
+.winner {
+	-webkit-animation: glowIt 1.5s infinite;
+	animation: glowIt 1.5s infinite;
+}
+
+@-webkit-keyframes glowIt {
+	0% { background-color: #FFF; }
+	33% { background-color: #91bd09; }
+	66% { background-color: #91bd09; }
+	100% { background-color: #FFF; }
+}
+
+@keyframes glowIt {
+	0% { background-color: #FFF; }
+	33% { background-color: #91bd09; }
+	66% { background-color: #91bd09; }
+	100% { background-color: #FFF; }
 }
