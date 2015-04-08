@@ -7,7 +7,7 @@ def to_json(request):
     try:
         data = json.loads(request.decode('utf-8'))
         value = data['action']
-    except Exception:
+    except:
         data = {}
         value = ''
     return data, value
