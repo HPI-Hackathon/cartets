@@ -85,7 +85,8 @@ function UI () {
 
     templates();
 
-    self.socket = new WebSocket('ws://87.106.33.22:8080', []);
+    // server: 87.106.33.22
+    self.socket = new WebSocket('ws://localhost:8080', []);
 
     self.socket.onopen = function () {
         console.info('connected to server');
