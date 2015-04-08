@@ -18,10 +18,8 @@ class CartetsServer(WebSocket):
         data, value = to_json(self.data)
 
         if value == 'init':
-            player = game.add_player(self, data)
-            answer_data = game.wait_for_answer(player)
-            if answer_data:
-                self.sendMessage(answer_data)
+            game.add_player(self, data)
+            game.check_for_start()
 
         if value == 'attributeSelected':
             game.attribute_selected(data)
@@ -32,6 +30,8 @@ class CartetsServer(WebSocket):
     def handleClose(self):
         print self.address, 'closed'
 
-game = Game()
-server = SimpleWebSocketServer('', 8080, CartetsServer)
-server.serveforever()
+
+if __name__ == '__main__':
+    game = Game()
+    server = SimpleWebSocketServer('', 8080, CartetsServer)
+    server.serveforever()
