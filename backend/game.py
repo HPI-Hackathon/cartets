@@ -9,9 +9,10 @@ import card_parser
 class Game:
     def __init__(self):
         self.players = {}
+        self.picked_cards = []
 
     def add_player(self, conn, data):
-        player = Player(conn, data)
+        player = Player(conn, data, self.picked_cards)
         self.players[player.get_name()] = player
         conn.sendMessage(json.dumps({'action': 'accepted', 'data': ''}))
 
@@ -70,10 +71,10 @@ class Game:
 
 
 class Player:
-    def __init__(self, conn, data):
+    def __init__(self, conn, data, picked_cards):
         self.name = data['name']
         self.connection = conn
-        self.cards = self.receive_cards(data)
+        self.cards = self.receive_cards(data, picked_cards)
         self.current_card = None
 
     def get_name(self):
@@ -85,11 +86,11 @@ class Player:
     def get_connection(self):
         return self.connection
 
-    def receive_cards(self, player_data):
+    def receive_cards(self, player_data, picked_cards):
         # Get card information from mobile.de API based on location
         long = player_data['data']['long']
         lat = player_data['data']['lat']
-        cards = card_parser.main(lat, long)
+        cards = card_parser.main(lat, long, picked_cards)
         return [Card(json.loads(values)) for values in cards]
 
     def next_card(self):
