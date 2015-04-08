@@ -7,20 +7,21 @@ import re
 # ^[0-9\.]+
 
 
-def main(long, lat):
+def main(long, lat, card_list):
     url = 'http://m.mobile.de/svc/s/?ll=' + str(long) + ',' + str(lat) + '&s=Car&psz=100&sb=doc'
     response = urllib2.urlopen(url)
     data = json.load(response)['items']
-    return generate_list(data)
+    return generate_list(data, card_list)
 
 
-def generate_list(list):
+def generate_list(list, card_list):
     res_list = []
     while len(res_list) <= 10:
         elem = random.choice(list)
-        item = validate_entry(elem)
-        if item:
-            res_list.append(item)
+        if elem not in res_list:
+            item = validate_entry(elem)
+            if item:
+                res_list.append(item)
     return res_list
 
 
@@ -40,7 +41,7 @@ def validate_entry(elem):
 
         except:
             return
-
+        card_list.append(elem)
         return json.dumps({'title': title,
                            'image': image,
                            'price': price,
