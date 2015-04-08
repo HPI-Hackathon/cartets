@@ -107,7 +107,12 @@ function UI () {
             case 'start':
             case 'next':
                 if (response.data.winner_card) {
-                    self.createCompareView(response.data.all_cards, response.data.winner_card, response.data.card);
+                    self.createCompareView(
+                        response.data.all_cards,
+                        response.data.winner_card,
+                        response.data.attribute_compared,
+                        response.data.card,
+                        response.data.turn);
                 } else {
                     self.startNextRound(response.data.card, response.data.turn);
                 }
@@ -143,7 +148,7 @@ UI.prototype.positionError = function (err) {
     console.log(err.code);
 };
 
-UI.prototype.createCompareView = function (cards, winnerCard, nextCard) {
+UI.prototype.createCompareView = function (cards, winnerCard, attributeCompared, nextCard, nextTurn) {
     var self = this;
     self.activateView('.compareView');
     $('.compareView').html('');
@@ -152,11 +157,15 @@ UI.prototype.createCompareView = function (cards, winnerCard, nextCard) {
         $('.compareView').append(cardTemplate(e));
     });
 
+    self.disableCardButtons();
+
+    $('.card button[data-attribute="' + attributeCompared + '"]').addClass('btn-primary');
+
     if (nextCard !== undefined) {
         var nextButton = $('<button class="btn btn-default">Weiter</button>');
         nextButton.addClass('nextRoundButton');
         nextButton.click(function () {
-            self.createCardView(nextCard);
+            self.startNextRound(nextCard, nextTurn);
         });
         $('.compareView').append(nextButton);
     }
