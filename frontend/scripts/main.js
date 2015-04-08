@@ -99,6 +99,7 @@ function UI () {
                     break;
                 }
             case 'start':
+                self.setPlayers(response.data.players);
             case 'next':
                 if (response.data.winner_card) {
                     self.createCompareView(
@@ -193,7 +194,18 @@ UI.prototype.setInstruction = function (text, type) {
         .html(text);
 };
 
+UI.prototype.highlightPlayer = function (playerName) {
+    $('#players a').each(function ($elem) {
+        if ($elem.data('player') === playerName) {
+            $elem.addClass('active');
+        } else {
+            $elem.removeClass('active');
+        }
+    });
+};
+
 UI.prototype.setActivePlayer = function (playerName) {
+    this.highlightPlayer(playerName);
     if (playerName !== this.player.name) {
         this.disableCardButtons();
         this.setInstruction('Warte auf die Wahl der Kennzahl!', 'alert-info');
@@ -209,6 +221,15 @@ UI.prototype.disableCardButtons = function () {
 UI.prototype.startNextRound = function (card, turn) {
     this.createCardView(card);
     this.setActivePlayer(turn);
+};
+
+UI.prototype.setPlayers = function (players) {
+    players.forEach(function (player) {
+        var listItem = $('<a href="#" class="list-group-item"></a>')
+            .html(player)
+            .data('player', player);
+        $('#players').append(listItem);
+    });
 };
 
 var userInterface = new UI();
