@@ -167,12 +167,19 @@ UI.prototype.createCompareView = function (cards, winnerCard, attributeCompared,
     $('.card button[data-attribute="' + attributeCompared + '"]').addClass('btn-primary');
 
     if (nextCard !== undefined) {
-        var nextButton = $('<button class="btn btn-default">Weiter</button>');
-        nextButton.addClass('nextRoundButton');
-        nextButton.click(function () {
-            self.startNextRound(nextCard, nextTurn);
-        });
-        $('.compareView').append(nextButton);
+        var endTime = Date.now() + 5000;
+        $('.progress').show();
+        var interval = setInterval(function () {
+            var currentTime = Date.now();
+            if (currentTime > endTime) {
+                clearInterval(interval);
+                $('.progress .progress-bar').width('100%');
+                $('.progress').hide();
+                self.startNextRound(nextCard, nextTurn);
+            } else {
+                $('.progress .progress-bar').width(((endTime - currentTime) / 50).toString() + '%');
+            }
+        }, 75);
     }
 };
 
