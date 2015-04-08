@@ -54,8 +54,8 @@ class Game:
         # Randomly select player to start
         random.seed(None)
         name, player = random.choice(self.players.items())
-        plys = [plyr for _, plyr in self.players.items()]
-        data = {'turn': name, 'players': plys}
+        names = [name for name, _ in self.players.items()]
+        data = {'turn': name, 'players': names}
         self.broadcast(data, 'start')
 
     def check_game_end(self):
