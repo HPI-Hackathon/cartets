@@ -193,12 +193,25 @@ UI.prototype.createCardView = function (card) {
 
 UI.prototype.activateView = function (view) {
     this.$allViews.hide();
+    $('#instruction').hide();
     $(view).show();
+};
+
+UI.prototype.setInstruction = function (text, type) {
+    $('#instruction')
+        .show()
+        .removeClass()
+        .addClass('alert')
+        .addClass(type)
+        .html(text);
 };
 
 UI.prototype.setActivePlayer = function (playerName) {
     if (playerName !== this.player.name) {
         this.disableCardButtons();
+        this.setInstruction('Warte auf die Wahl der Kennzahl!', 'alert-info');
+    } else {
+        this.setInstruction('Nice! Wähle eine Kennzahl!', 'alert-success');
     }
 };
 
