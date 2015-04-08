@@ -2,7 +2,6 @@
 
 import json
 import random
-import time
 
 import card_parser
 
@@ -32,19 +31,10 @@ class Game:
                 self.running = True
                 return
             else:
-                print player.get_name(), "is waiting to start..."
-                #while not self.running:
-                #    time.sleep(0.5)
                 return
-
-        print player.get_name(), "is waiting for evaluation..."
-        #while not self.is_evaluated:
-        #    time.sleep(0.5)
-
         return
 
     def attribute_selected(self, data):
-        print "Attribute selected", data
         # Get all cards with players
         player_cards = self.players.items()
         cards = [(player, player.get_card()) for name, player in player_cards]
@@ -54,7 +44,6 @@ class Game:
         cur_card = cards[[x for x, _ in cards].index(self.turn)][1]
         attr = data['data']['attributeToCompare']
         winner, card = cur_card.compare(attr, cards)
-        print "Winner:", winner.get_name()
 
         # Update after comparison
         self.turn = winner
@@ -63,13 +52,7 @@ class Game:
         data['all_cards'] = all_cards
         data['winner_card'] = card.get_values()
         self.is_evaluated = True
-        print "eval"
-
-        # Send data to players
-        for name, player in self.players.items():
-            data['card'] = player.next_card()
-            conn = player.get_connection()
-            conn.sendMessage(json.dumps({'action': 'start', 'data': data}))
+        self.broadcast(data)
 
     def start_game(self):
         random.seed(None)
@@ -77,7 +60,9 @@ class Game:
         self.turn = self.players[name]
         data = {'turn': name}
         self.running = True
-        print "The game was started.", name, "begins."
+        self.broadcast(data)
+
+    def broadcast(self, data):
         for name, player in self.players.items():
             data['card'] = player.next_card()
             conn = player.get_connection()
@@ -126,14 +111,14 @@ class Card:
 
     def compare(self, attr, player_cards):
         comp = self.comparisons[attr]
-        print "card:", player_cards[1][1]
-        print "attr:", attr
-        print "card:", player_cards[1][1].get_values()
-        print "type:", type(player_cards[1][1].get_values())
-        return comp(player_cards, key=lambda x: float(x[1].get_value(attr)))
+        for player, card in player_cards:
+            print card.get_values()
+        res = comp(player_cards, key=lambda pair: float(pair[1].get(attr)))
+        print res
+        return res
 
     def get_values(self):
         return self.values
 
-    def get_value(self, attr):
+    def get(self, attr):
         return self.values[attr]
