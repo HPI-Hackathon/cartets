@@ -74,7 +74,7 @@ p {
 }
 
 .progress {
-    position: fixed;
+    position: absolute;
     width: 100%;
 }
 
