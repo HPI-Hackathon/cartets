@@ -28,9 +28,9 @@ class Game:
 
         # Get current card and compare it
         attr = data['data']['attributeToCompare']
-        winner, card = Card.compare(attr, cards)
+        winner, winner_card = Card.compare(attr, cards)
+        data = {'all_cards': all_card_values, 'winner_card': winner_card.get_values()}
         winner.add_cards([card for _, card in cards])
-        data = {'all_cards': all_card_values, 'winner_card': card.get_values()}
 
         # Check if game has ended
         has_ended, player = self.check_game_end()
@@ -137,6 +137,7 @@ class Card:
         comp = Card.comparisons[attr]
         # Compare card value from (player, card) as float
         return comp(player_cards, key=lambda pair: float(pair[1].get(attr)))
+
 
     def get_values(self):
         return self.values
