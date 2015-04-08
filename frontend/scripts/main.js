@@ -122,6 +122,14 @@ function UI () {
                     self.startNextRound(response.data.card, response.data.turn);
                 }
                 break;
+            case 'playerLost':
+                if (response.data.loser.indexOf(self.player.name) > -1) {
+                    self.activateView('.loseView');
+                } else if (!response.data.card) {
+                    self.activateView('.winView');
+                }
+                self.socket.onmessage = undefined;
+                break;
             default:
                 break;
         }
@@ -168,8 +176,10 @@ UI.prototype.createCompareView = function (cards, winnerCard, attributeCompared,
 
     $('.card button[data-attribute="' + attributeCompared + '"]').addClass('btn-primary');
 
+    $($('.card a[href="' + winnerCard.url + '"]').parents('.card')[0]).addClass('winner');
+
     if (nextCard !== undefined) {
-        var endTime = Date.now() + 5000;
+        var endTime = Date.now() + 12000;
         $('.progress').show();
         var interval = setInterval(function () {
             var currentTime = Date.now();
@@ -179,7 +189,7 @@ UI.prototype.createCompareView = function (cards, winnerCard, attributeCompared,
                 $('.progress').hide();
                 self.startNextRound(nextCard, nextTurn);
             } else {
-                $('.progress .progress-bar').width(((endTime - currentTime) / 50).toString() + '%');
+                $('.progress .progress-bar').width(((endTime - currentTime) / 120).toString() + '%');
             }
         }, 75);
     }
