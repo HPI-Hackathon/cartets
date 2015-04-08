@@ -38,7 +38,12 @@ class Game:
             data['loser'] = player
             has_next_round = True if len(self.players) > 1 else False
             self.broadcast(data, 'playerLost', next_card=has_next_round)
-            self.end_connections()
+            if not has_next_round:
+                self.end_connections()
+            else:
+                for p in player:
+                    self.players[p].get_connection().sendClose()
+                    del self.players[player]
 
         # Update after comparison
         data['turn'] = winner.get_name()
@@ -53,14 +58,13 @@ class Game:
         self.broadcast(data, 'start')
 
     def check_game_end(self):
-        # End if any player has no cards left
+        # Check if all players still have cards left
         has_ended = False
         players = []
         for name, player in self.players.items():
             if not player.has_cards():
                 has_ended = True
                 players.append(name)
-                del self.players[name]
         return has_ended, players
 
     def broadcast(self, data, action, next_card=True):
@@ -101,11 +105,17 @@ class Player:
         return [Card(json.loads(values)) for values in cards]
 
     def next_card(self):
-        self.current_card = self.cards.pop(0)
+        try:
+            self.current_card = self.cards.pop(0)
+        except:
+            return {}
         return self.current_card.get_values()
 
     def add_cards(self, cards):
-        self.cards.extend(cards)
+        try:
+            self.cards.extend(cards)
+        except:
+            print "SOMETHING WENT WRONG!"
 
     def has_cards(self):
         return len(self.cards) > 0
@@ -114,8 +124,8 @@ class Player:
 class Card:
     comparisons = {'price': min,
                    'power': max,
-                   'mileage': min,
                    'registration': max,
+                   'mileage': min,
                    'consumption': min}
 
     def __init__(self, values):

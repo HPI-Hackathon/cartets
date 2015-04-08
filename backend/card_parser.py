@@ -16,7 +16,7 @@ def main(long, lat, card_list):
 
 def generate_list(list, card_list):
     res_list = []
-    while len(res_list) < 10:
+    while len(res_list) < 5:
         elem = random.choice(list)
         if elem['id'] in card_list:
             continue
