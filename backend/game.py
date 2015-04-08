@@ -14,7 +14,6 @@ class Game:
         player = Player(conn, data)
         self.players[player.get_name()] = player
         conn.sendMessage(json.dumps({'action': 'accepted', 'data': ''}))
-        print "Added player:", player.get_name()
 
     def check_for_start(self):
         if len(self.players) == 3:
@@ -43,18 +42,21 @@ class Game:
         self.broadcast(data, 'next')
 
     def start_game(self):
+        # Randomly select player to start
         random.seed(None)
         name, player = random.choice(self.players.items())
         data = {'turn': name}
         self.broadcast(data, 'start')
 
     def check_game_end(self):
+        # End if any player has no cards left
         for name, player in self.players.items():
             if not player.has_cards():
                 return True
         return False
 
     def broadcast(self, data, action, next_card=True):
+        # Send data to all players
         for name, player in self.players.items():
             if next_card:
                 data['card'] = player.next_card()
@@ -62,6 +64,7 @@ class Game:
             conn.sendMessage(json.dumps({'action': action, 'data': data}))
 
     def end_connections(self):
+        # Close all connections
         for _, player in self.players.items():
             player.get_connection().sendClose()
 
@@ -83,6 +86,7 @@ class Player:
         return self.connection
 
     def receive_cards(self, player_data):
+        # Get card information from mobile.de API based on location
         long = player_data['data']['long']
         lat = player_data['data']['lat']
         cards = card_parser.main(lat, long)
@@ -111,7 +115,9 @@ class Card:
 
     @staticmethod
     def compare(attr, player_cards):
+        # Select min or max according to selected attribute
         comp = Card.comparisons[attr]
+        # Compare card value from (player, card) as float
         return comp(player_cards, key=lambda pair: float(pair[1].get(attr)))
 
     def get_values(self):

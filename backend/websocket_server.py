@@ -18,10 +18,12 @@ class CartetsServer(WebSocket):
         data, value = to_json(self.data)
 
         if value == 'init':
+            # New player connected
             game.add_player(self, data)
             game.check_for_start()
 
         if value == 'attributeSelected':
+            # Attribute was selected
             game.attribute_selected(data)
 
     def handleConnected(self):
