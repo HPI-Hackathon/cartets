@@ -40,7 +40,8 @@ class Game:
             self.end_connections()
 
         # Update after comparison
-        data = {'turn': winner.get_name()}
+        data['turn'] = winner.get_name()
+        data['attribute_compared'] = attr
         self.broadcast(data, 'next')
 
     def start_game(self):
