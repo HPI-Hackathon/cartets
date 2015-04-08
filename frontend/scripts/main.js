@@ -4,7 +4,7 @@
 
 var cardTemplate;
 
-function card (title, image, location, price, power, registration, mileage, consumption) {
+function card (title, image, location, price, power, registration, mileage, consumption, url) {
     return {
         title: title,
         image: image,
@@ -13,7 +13,8 @@ function card (title, image, location, price, power, registration, mileage, cons
         power: power,
         registration: registration,
         mileage: mileage,
-        consumption: consumption
+        consumption: consumption,
+        url: url
     };
 }
 
