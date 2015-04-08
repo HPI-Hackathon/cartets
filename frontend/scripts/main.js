@@ -26,7 +26,10 @@ var cards = [
 function templates () {
     cardTemplate = Handlebars.compile($('#card-template').html());
     Handlebars.registerHelper('trimString', function(passedString) {
-        var theString = passedString.substring(0, 20) + '...';
+        var theString = passedString.substring(0, 20);
+        if (theString !== passedString) {
+            theString += '&hellip;';
+        }
         return new Handlebars.SafeString(theString);
     });
 }
@@ -123,6 +126,7 @@ function UI () {
     };
 
     //self.createCardView(cards[0]);
+    //self.createCompareView(cards);
 }
 
 UI.prototype.setPosition = function (position) {
