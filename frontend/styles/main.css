@@ -57,6 +57,7 @@ p {
 
 .compareView {
     position: relative;
+    margin-top: 20px;
     -webkit-transform-origin: top left;
     transform-origin: top left;
     -webkit-transform: scale(0.75);
