@@ -35,6 +35,12 @@ p {
 	max-width: 100%;
 }
 
+.card button .compareIndicator {
+	color: #1b1;
+	float: right;
+	margin-left: 0.5em;
+}
+
 .cardView {
 	max-width: 100%;
 }
