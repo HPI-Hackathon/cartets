@@ -4,26 +4,6 @@
 
 var cardTemplate;
 
-function card (title, image, location, price, power, registration, mileage, consumption, url) {
-    return {
-        title: title,
-        image: image,
-        location: location,
-        price: price,
-        power: power,
-        registration: registration,
-        mileage: mileage,
-        consumption: consumption,
-        url: url
-    };
-}
-
-var cards = [
-    card('Audi A6 long long long long long long', 'lorempixel.com/400/300/transport/', 'August-Bebel-Str. 4, 14482 Potsdam', '34000', '140', '2006', '23000', '7', 'http://google.de/'),
-    card('VW Polo', 'i.ebayimg.com/00/s/NjAwWDgwMA==/z/IVgAAOSwPhdU-FPW/$_8.jpg', 'August-Bebel-Str. 12, 15345 Rehfelde', '5600', '90', '1997', '230000', '6', 'http://google.de/'),
-    card('Kaputte Karre', 'i.ebayimg.com/00/s/NDgwWDY0MA==/$T2eC16VHJGYFFlLe3qSvBReifcZW2!~~48_8.jpg', 'Großer Stern, 10355 Berlin', '300', '80', '2000', '104000', '14', 'http://google.de/')
-];
-
 function templates () {
     cardTemplate = Handlebars.compile($('#card-template').html());
     Handlebars.registerHelper('trimString', function(passedString) {
@@ -56,7 +36,7 @@ function UI () {
         };
 
         if ($.trim($('#usernameForm #username').val()) === '') {
-            alert('kein Username eingegeben');
+            alert('Bitte gib einen Usernamen ein.');
         } else {
             data.name = $.trim($('#usernameForm #username').val());
             self.player.name = data.name;
@@ -67,7 +47,6 @@ function UI () {
     $('.cardView').on('click', 'button', function () {
         self.disableCardButtons();
         var attributeToCompare = $(this).data('attribute');
-        console.log('send selected attribute');
         self.socket.send(JSON.stringify({
             action: 'attributeSelected',
             name: self.player.name,
@@ -109,6 +88,16 @@ function UI () {
             case 'accepted':
                 self.activateView('.waitingView');
                 break;
+            case 'playerLost':
+                if (response.data.loser.indexOf(self.player.name) > -1) {
+                    self.activateView('.loseView');
+                    self.socket.onmessage = undefined;
+                    break;
+                } else if (response.data.loser.indexOf(self.player.name) === -1 && response.data.loser.length >= 2) {
+                    self.activateView('.winView');
+                    self.socket.onmessage = undefined;
+                    break;
+                }
             case 'start':
             case 'next':
                 if (response.data.winner_card) {
@@ -122,22 +111,10 @@ function UI () {
                     self.startNextRound(response.data.card, response.data.turn);
                 }
                 break;
-            case 'playerLost':
-                if (response.data.loser.indexOf(self.player.name) > -1) {
-                    self.activateView('.loseView');
-                } else if (!response.data.card) {
-                    self.activateView('.winView');
-                }
-                self.socket.onmessage = undefined;
-                break;
             default:
                 break;
         }
     };
-
-    //self.createCardView(cards[0]);
-    //self.createCompareView(cards);
-    //$('.compareView .card:nth-child(2)').addClass('winner');
 }
 
 UI.prototype.setPosition = function (position) {
